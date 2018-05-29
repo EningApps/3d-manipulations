@@ -6,7 +6,7 @@
 
 #include <vector>
 
-#define a 100
+#define a 80
 
 
 
@@ -26,17 +26,15 @@ int main(int argc, char *args[])
     
     ZBuffer * zBuffer = new ZBuffer(SCREEN_WIDTH,SCREEN_HEIGHT);
     
-    Cube * cube1 = new Cube(a,Xcentr, Ycentr, 0, zBuffer);
-    Cube * cube2 = new Cube(a,Xcentr-a, Ycentr+a*2,-a,zBuffer);
-    Cube * cube3 = new Cube(a,Xcentr+a, Ycentr+a*2,-a,zBuffer);
+    Cube * cube1 = new Cube(a,Xcentr, Ycentr+100, 0, zBuffer, renderer);
+    Cube * cube2 = new Cube(a,Xcentr-a, Ycentr+100+a*2,-a,zBuffer,renderer);
+    Cube * cube3 = new Cube(a,Xcentr+a, Ycentr+100+a*2,-a,zBuffer,renderer);
 
-    //rotateCube(cube1);
-    //rotateCube(cube2);
-    //rotateCube(cube3);
+ 
     
-    drawCube(cube1, renderer);
-    drawCube(cube2, renderer);
-    drawCube(cube3, renderer);
+    cube1->drawCube(renderer);
+    cube2->drawCube(renderer);
+    cube3->drawCube(renderer);
 
     SDL_RenderPresent(renderer);
   
@@ -52,15 +50,28 @@ int main(int argc, char *args[])
                     SDL_RenderClear(renderer);
                     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
                     
-                    cube1->rotateCube(rotateMatrix);
-                    cube2->rotateCube(rotateMatrix);
-                    cube3->rotateCube(rotateMatrix);
                     
-                    drawCube(cube1, renderer);
-                    drawCube(cube2, renderer);
-                    drawCube(cube3, renderer);
+                
+                    cube1->rotateCube(Z_RotateMatrix, moveToStartMatrix,moveToCenterMatrix);
+                    cube2->rotateCube(Z_RotateMatrix, moveToStartMatrix,moveToCenterMatrix);
+                    cube3->rotateCube(Z_RotateMatrix, moveToStartMatrix,moveToCenterMatrix);
+//
+
+                    cube1->drawCube(renderer);
+                    cube2->drawCube(renderer);
+                    cube3->drawCube(renderer);
                 
                     SDL_RenderPresent(renderer);
+                    break;
+                case SDL_MOUSEMOTION:
+                    
+                   
+                    int mouseX = event.motion.x;
+                    int mouseY = event.motion.y;
+                    std::stringstream ss;
+                    ss << "X: " << mouseX << " Y: " << mouseY;
+                    SDL_SetWindowTitle(window, ss.str().c_str());
+                    
                     break;
             }
         }

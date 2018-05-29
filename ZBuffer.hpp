@@ -24,18 +24,33 @@ struct ZBuffer{
             }
             for(int i = 0; i< height; i++){
                 for(int j = 0; j< width; j++){
-                    z_depth_map[i][j] = 10000000;
+                    z_depth_map[i][j] = 100000;
                 }
             }
         }
     
     public:
-    ZBuffer(int SCREEN_WIDTH, int SCREEN_HEIGHT){
-        this->height = SCREEN_HEIGHT;
-        this->width = SCREEN_WIDTH;
-        initBufMap();
-    }
+        ZBuffer(int SCREEN_WIDTH, int SCREEN_HEIGHT){
+            this->height = SCREEN_HEIGHT;
+            this->width = SCREEN_WIDTH;
+            initBufMap();
+        }
+    
+    
+    
         int ** z_depth_map;
+    
+    
+    
+        void clearBuffer(){
+            for(int i = 0; i< height; i++){
+                for(int j = 0; j< width; j++){
+                    z_depth_map[i][j] = 100000;
+                }
+            }
+        }
+    
+    
     
 
     
