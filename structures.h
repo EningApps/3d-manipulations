@@ -40,12 +40,15 @@ struct Cube{
         float a;
         Face *faces;
     
+        Cube(){
+            
+        }
     
-    
-        Cube(float da,float xCenter, float yCenter, float zCenter, ZBuffer * zBuffer, SDL_Renderer *renderer){
+        Cube(float da,float xCenter, float yCenter, float zCenter, ZBuffer * zBuffer, SDL_Renderer *renderer , int color){
             this->a = da*sqrt(2);
             this->faces = new Face[6];
             this->zBuffer = zBuffer ;
+            this->color = color;
             
             
             //top face
@@ -161,6 +164,8 @@ struct Cube{
             faces[5].coordinates[3][2] = zCenter+2*da;
             
             
+            
+            
             for(int i=0;i<6;i++){//initializing additional dimension coordinates as ones for 3d operations
                 for(int j=0;j<4;j++){
                     faces[i].coordinates[j][3] = 1;
@@ -204,7 +209,6 @@ struct Cube{
         
         
         zBuffer->clearBuffer();
-        
         loadInDepthMap3( zBuffer, faces[0]);
         loadInDepthMap3( zBuffer, faces[1]);
         loadInDepthMap3( zBuffer, faces[2]);
@@ -212,29 +216,30 @@ struct Cube{
         loadInDepthMap3( zBuffer, faces[4]);
         loadInDepthMap3( zBuffer, faces[5]);
 
-        for(int i=0;i<1080;i++){
-            for(int j=0;j<1080;j++){
-                if(zBuffer->z_depth_map[i][j]!=100000){
-                   // printf("I:%d J:%d z: %d\n",i,j,zBuffer->z_depth_map[i][j]);
-                    SDL_SetRenderDrawColor(renderer, 210, 43, 44, 255);
-                    SDL_RenderDrawPoint(renderer, j, i);
-                }
 
-
-            }
-        }
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
         for(int i=0;i<6;i++){
             drawFace(this->faces[i],renderer);
         }
         
-         //   drawFace(this->faces[5],renderer);
+      
+        for(int i=0;i<1080;i++){
+            for(int j=0;j<1080;j++){
+                if(zBuffer->z_depth_map[i][j]!=100000){
+                    // printf("I:%d J:%d z: %d\n",i,j,zBuffer->z_depth_map[i][j]);
+                    SDL_SetRenderDrawColor(renderer, color*2, 121, 111, 255);
+                    SDL_RenderDrawPoint(renderer, j, i);
+                }
+                
+                
+            }
+        }
         
     }
     
     private:
-    
+        int color;
         ZBuffer * zBuffer;
     
         float ** recalculatFaces(Face face,float B[4][4] ){//multiply matrixies
@@ -330,8 +335,8 @@ struct Cube{
     
             int * borderCoordinates = findFaceRectFiled(face);
             
-            for(int i= borderCoordinates[1]; i<=borderCoordinates[3];i++){
-                for(int j = borderCoordinates[0]; j<= borderCoordinates[2];j++){
+            for(int i= borderCoordinates[1]-1; i<=borderCoordinates[3]+1;i++){
+                for(int j = borderCoordinates[0]-1; j<= borderCoordinates[2]+1;j++){
                     if(0<=j && j<=1080 && 0<=i && i<=1080)
                         if(isInFace(face, j,i) && zBuffer->z_depth_map[i][j]>=zMax){
                             zBuffer->z_depth_map[i][j]=zMax;

@@ -9,6 +9,39 @@
 #define a 80
 
 
+int getMaxZ(Cube *cube){
+    
+    int zMax=-10000;
+    for(int j=0;j<6;j++){
+        for(int i=0;i<4;i++){
+            if(zMax<=cube->faces[j].coordinates[i][2])
+                zMax=cube->faces[j].coordinates[i][2];
+        }
+    }
+    return zMax;
+}
+
+
+void orderCubes(Cube ** cubes, int n){
+    
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n - i - 1 ; j++)
+        {
+            int zMaxJ1 = getMaxZ(cubes[j+1]);
+            int zMaxj = getMaxZ(cubes[j]);
+            if (zMaxJ1 > zMaxj)
+            {
+                Cube * temp = cubes[j];
+                cubes[j] = cubes[j + 1];
+                cubes[j + 1] = temp;
+            }
+        }
+    }
+}
+
+
+
 
 
 int main(int argc, char *args[])
@@ -26,16 +59,24 @@ int main(int argc, char *args[])
     
     ZBuffer * zBuffer = new ZBuffer(SCREEN_WIDTH,SCREEN_HEIGHT);
     
-    Cube * cube1 = new Cube(a,Xcentr, Ycentr+100, Zcentr, zBuffer, renderer);
-    Cube * cube2 = new Cube(a,Xcentr-a, Ycentr+100+a*2,-a,zBuffer,renderer);
-    Cube * cube3 = new Cube(a,Xcentr+a, Ycentr+100+a*2,-a,zBuffer,renderer);
+    Cube *cube1 = new Cube(a,Xcentr, Ycentr+100, Zcentr+160, zBuffer, renderer , 40);
+    Cube *cube2 = new Cube(a,Xcentr-a, Ycentr+100+a*2,-a+160,zBuffer,renderer,100);
+    Cube *cube3 = new Cube(a,Xcentr+a, Ycentr+100+a*2,-a+160,zBuffer,renderer,80);
 
- 
+    Cube ** cubes =(Cube**) malloc(sizeof(Cube*)*3);
+    cubes[0]= cube1;
+    cubes[1]=cube2;
+    cubes[2]=cube3;
     
-    cube1->drawCube(renderer);
-    cube2->drawCube(renderer);
-    cube3->drawCube(renderer);
-
+    int n =3;
+    orderCubes(cubes, n);
+    
+    cubes[0]->drawCube(renderer);
+    cubes[1]->drawCube(renderer);
+    cubes[2]->drawCube(renderer);
+    
+    
+    
     SDL_RenderPresent(renderer);
   
 
@@ -54,22 +95,22 @@ int main(int argc, char *args[])
                     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
                     
                     switch (event.key.keysym.sym) {
-                        case 113:
+                        case SDLK_q:
                             
-                            cube1->rotateCube(X_RotateMatrixR, moveToStartMatrix,moveToCenterMatrix);
-                            cube2->rotateCube(X_RotateMatrixR, moveToStartMatrix,moveToCenterMatrix);
-                            cube3->rotateCube(X_RotateMatrixR, moveToStartMatrix,moveToCenterMatrix);
+                            cube1->rotateCube(Y_RotateMatrixR, moveToStartMatrix,moveToCenterMatrix);
+                            cube2->rotateCube(Y_RotateMatrixR, moveToStartMatrix,moveToCenterMatrix);
+                            cube3->rotateCube(Y_RotateMatrixR, moveToStartMatrix,moveToCenterMatrix);
                             
                             break;
                             
                             
-                        case 122:
-                            cube1->rotateCube(X_RotateMatrixL, moveToStartMatrix,moveToCenterMatrix);
-                            cube2->rotateCube(X_RotateMatrixL, moveToStartMatrix,moveToCenterMatrix);
-                            cube3->rotateCube(X_RotateMatrixL, moveToStartMatrix,moveToCenterMatrix);
+                        case SDLK_z:
+                            cube1->rotateCube(Y_RotateMatrixL, moveToStartMatrix,moveToCenterMatrix);
+                            cube2->rotateCube(Y_RotateMatrixL, moveToStartMatrix,moveToCenterMatrix);
+                            cube3->rotateCube(Y_RotateMatrixL, moveToStartMatrix,moveToCenterMatrix);
                             break;
                             
-                        case 97:
+                        case SDLK_a:
                             
                             cube1->rotateCube(Z_RotateMatrixR, moveToStartMatrix,moveToCenterMatrix);
                             cube2->rotateCube(Z_RotateMatrixR, moveToStartMatrix,moveToCenterMatrix);
@@ -78,13 +119,13 @@ int main(int argc, char *args[])
                             break;
                             
                             
-                        case 100:
+                        case SDLK_d:
                             cube1->rotateCube(Z_RotateMatrixL, moveToStartMatrix,moveToCenterMatrix);
                             cube2->rotateCube(Z_RotateMatrixL, moveToStartMatrix,moveToCenterMatrix);
                             cube3->rotateCube(Z_RotateMatrixL, moveToStartMatrix,moveToCenterMatrix);
                             break;
                             
-                        case 119:
+                        case SDLK_w:
                             
                             cube1->rotateCube(X_RotateMatrixR, moveToStartMatrix,moveToCenterMatrix);
                             cube2->rotateCube(X_RotateMatrixR, moveToStartMatrix,moveToCenterMatrix);
@@ -93,7 +134,7 @@ int main(int argc, char *args[])
                             break;
                             
                             
-                        case 115:
+                        case SDLK_s:
                             
                             cube1->rotateCube(X_RotateMatrixL, moveToStartMatrix,moveToCenterMatrix);
                             cube2->rotateCube(X_RotateMatrixL, moveToStartMatrix,moveToCenterMatrix);
@@ -105,14 +146,19 @@ int main(int argc, char *args[])
                             break;
                     }
                 
+                    
                    
 
-                    cube1->drawCube(renderer);
-                    cube2->drawCube(renderer);
-                    cube3->drawCube(renderer);
-                
+                    orderCubes(cubes, n);
+                    
+                    cubes[0]->drawCube(renderer);
+                    cubes[1]->drawCube(renderer);
+                    cubes[2]->drawCube(renderer);
+                    
+                    
                     SDL_RenderPresent(renderer);
                     break;
+                    
                 case SDL_MOUSEMOTION:
                 
                    
