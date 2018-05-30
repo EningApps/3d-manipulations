@@ -161,7 +161,7 @@ struct Cube{
             faces[5].coordinates[3][2] = zCenter+2*da;
             
             
-            for(int i=0;i<5;i++){//initializing additional dimension coordinates as ones for 3d operations
+            for(int i=0;i<6;i++){//initializing additional dimension coordinates as ones for 3d operations
                 for(int j=0;j<4;j++){
                     faces[i].coordinates[j][3] = 1;
                 }
@@ -171,26 +171,31 @@ struct Cube{
 
     
     void rotateCube(float rotateMatrix[4][4],float moveToStartMatrix[4][4],float moveToCenterMatrix[4][4] ){
-        for(int i=0;i<4;i++){
-            printf("\nP:%d",i);
-            printf("  x:%lf y:%lf z:%lf  , %lf\n",faces[5].coordinates[i][0],faces[5].coordinates[i][1],faces[5].coordinates[i][2],faces[5].coordinates[i][3]);
-        }
+       
         
         for(int i=0;i<6;i++){
             this->faces[i].coordinates = recalculatFaces(faces[i] , moveToStartMatrix);
         }
+        
+        
+//        for(int i=0;i<4;i++){
+//            printf("\nP:%d",i);
+//            printf("  x:%lf y:%lf z:%lf  , %lf\n",faces[5].coordinates[i][0],faces[5].coordinates[i][1],faces[5].coordinates[i][2],faces[5].coordinates[i][3]);
+//        }
+        
         for(int i=0;i<6;i++){
             this->faces[i].coordinates = recalculatFaces(faces[i],rotateMatrix);
         }
+        
         for(int i=0;i<6;i++){
             this->faces[i].coordinates = recalculatFaces(faces[i],moveToCenterMatrix);
         }
         
         
-        for(int i=0;i<4;i++){
-            printf("\n\nP:%d",i);
-            printf(" x:%lf y:%lf z:%lf  , %lf\n",faces[5].coordinates[i][0],faces[5].coordinates[i][1],faces[5].coordinates[i][2],faces[5].coordinates[i][3]);
-        }
+//        for(int i=0;i<4;i++){
+//            printf("\n\nP:%d",i);
+//            printf(" x:%lf y:%lf z:%lf  , %lf\n",faces[5].coordinates[i][0],faces[5].coordinates[i][1],faces[5].coordinates[i][2],faces[5].coordinates[i][3]);
+//        }
     }
     
     
@@ -205,13 +210,13 @@ struct Cube{
         loadInDepthMap3( zBuffer, faces[2]);
         loadInDepthMap3( zBuffer, faces[3]);
         loadInDepthMap3( zBuffer, faces[4]);
-       // loadInDepthMap3( zBuffer, faces[5]);
-    
+        loadInDepthMap3( zBuffer, faces[5]);
+
         for(int i=0;i<1080;i++){
             for(int j=0;j<1080;j++){
                 if(zBuffer->z_depth_map[i][j]!=100000){
                    // printf("I:%d J:%d z: %d\n",i,j,zBuffer->z_depth_map[i][j]);
-                    SDL_SetRenderDrawColor(renderer, 32, 43, 44, 255);
+                    SDL_SetRenderDrawColor(renderer, 210, 43, 44, 255);
                     SDL_RenderDrawPoint(renderer, j, i);
                 }
 
@@ -220,7 +225,7 @@ struct Cube{
         }
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-        for(int i=0;i<5;i++){
+        for(int i=0;i<6;i++){
             drawFace(this->faces[i],renderer);
         }
         
@@ -239,6 +244,7 @@ struct Cube{
                 newCoordinates[i] = (float*) calloc(4,sizeof(float));
             }
             
+    
             for(int i = 0; i < 4; i++){
                 for(int j = 0; j < 4; j++){
                     for(int k = 0; k < 4; k++){
@@ -247,6 +253,7 @@ struct Cube{
                     }
                 }
             }
+            
             
             return newCoordinates;
             
@@ -350,8 +357,8 @@ struct Cube{
             
             if (length == 0)
             {
-                if(y1>=0 && y1<1080 && x1>=0&&x1<1080)
-                    if(zBuffer->z_depth_map[y1][x1] > bufZ)
+//                if(y1>=0 && y1<1080 && x1>=0&&x1<1080)
+//                    if(zBuffer->z_depth_map[y1][x1] > bufZ)
                     SDL_RenderDrawPoint(renderer, x1, y1);
             }
             
@@ -366,8 +373,8 @@ struct Cube{
                 length++;
                 while(length--)
                 {
-                    if(y>=0&&y<1080 && x>=0&&x<1080)
-                        if(zBuffer->z_depth_map[y][x] > bufZ)
+//                    if(y>=0&&y<1080 && x>=0&&x<1080)
+//                        if(zBuffer->z_depth_map[y][x] > bufZ)
                             SDL_RenderDrawPoint(renderer, x, y);
                     x += dx;
                     d += 2 * lengthY;
@@ -389,8 +396,8 @@ struct Cube{
                 length++;
                 while(length--)
                 {
-                    if(y>=0&&y<1080 && x>=0&&x<1080)
-                        if(zBuffer->z_depth_map[y][x] > bufZ)
+//                    if(y>=0&&y<1080 && x>=0&&x<1080)
+//                        if(zBuffer->z_depth_map[y][x] > bufZ)
                             SDL_RenderDrawPoint(renderer, x, y);
                     y += dy;
                     d += 2 * lengthX;
